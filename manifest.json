@@ -1,0 +1,72 @@
+{
+  "name": "Agenda Rosi Gomes",
+  "short_name": "Agenda Rosi",
+  "description": "Sistema de agendamento para podologia e estética - Rosi Gomes",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#7c3aed",
+  "background_color": "#faf7ff",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["business", "productivity", "lifestyle"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "android",
+      "label": "Tela inicial da agenda"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo Agendamento",
+      "short_name": "Novo",
+      "description": "Adicionar um novo agendamento rapidamente",
+      "url": "/?action=new",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos de Hoje",
+      "short_name": "Hoje",
+      "description": "Ver agendamentos do dia atual",
+      "url": "/?tab=hoje",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "display_override": ["standalone", "minimal-ui"],
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
