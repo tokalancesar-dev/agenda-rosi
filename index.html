@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7c3aed">
+<meta name="description" content="Agenda profissional para podologia e estética">
+<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Agenda Rosi Gomes - Profissional</title>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary: #7c3aed;
+        --primary-dark: #6d28d9;
+        --primary-light: #a855f7;
+        --secondary: #ec4899;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --light: #f9fafb;
+        --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 0;
+        margin: 0;
+    }
+
+    .app-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Moderno */
+    .header-modern {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 30px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .logo-area h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+    }
+
+    .badge-pro {
+        font-size: 0.7rem;
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--primary);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    /* Dashboard Cards */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--gradient);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .card-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+
+    .card-label {
+        font-size: 0.85rem;
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .revenue-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .btn-revenue {
+        flex: 1;
+        padding: 10px;
+        border-radius: 40px;
+        border: none;
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-revenue:hover {
+        background: var(--gradient);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Filtros Rápidos */
+    .filters-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .filter-chip {
+        padding: 8px 16px;
+        border-radius: 40px;
+        background: var(--light);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        font-weight: 500;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .filter-chip.active {
+        background: var(--gradient);
+        color: white;
+        border-color: transparent;
+    }
+
+    .filter-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--danger);
+        color: white;
+        border-radius: 20px;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Lista de Agendamentos */
+    .appointments-list {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 20px;
+        min-height: 400px;
+    }
+
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .search-box {
+        flex: 1;
+        max-width: 300px;
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 16px 10px 40px;
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    .count-badge {
+        background: var(--gradient);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin-left: 8px;
+    }
+
+    /* Item de Agendamento */
+    .appointment-item {
+        background: white;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 12px;
+        transition: all 0.2s;
+        border: 1px solid rgba(124, 58, 237, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideIn 0.3s ease;
+    }
+
+    .appointment-item:hover {
+        transform: translateX(4px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-light);
+    }
+
+    .appointment-item.cancelled {
+        opacity: 0.7;
+        background: #f9fafb;
+    }
+
+    .appointment-item.completed {
+        background: #f0fdf4;
+        border-color: var(--success);
+    }
+
+    .appointment-info {
+        flex: 1;
+    }
+
+    .client-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--dark);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .status-confirmed {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+
+    .status-cancelled {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    .status-completed {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success);
+    }
+
+    .appointment-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.8rem;
+        color: var(--gray);
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .appointment-notes {
+        font-size: 0.75rem;
+        color: var(--gray);
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(124, 58, 237, 0.1);
+    }
+
+    /* Ações dos Botões */
+    .appointment-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: white;
+    }
+
+    .action-btn.whatsapp { background: #25D366; }
+    .action-btn.edit { background: #3b82f6; }
+    .action-btn.cancel { background: #f59e0b; }
+    .action-btn.reactivate { background: #10b981; }
+    .action-btn.delete { background: #ef4444; }
+    .action-btn.complete { background: var(--success); }
+
+    .action-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* FAB Button */
+    .fab-button {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 28px;
+        background: var(--gradient);
+        color: white;
+        border: none;
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: all 0.3s;
+        z-index: 100;
+    }
+
+    .fab-button:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* Modal */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 32px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 24px;
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: var(--gray);
+        padding: 4px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark);
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid rgba(124, 58, 237, 0.2);
+        border-radius: 16px;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn-primary, .btn-secondary {
+        flex: 1;
+        padding: 12px;
+        border-radius: 40px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .btn-primary {
+        background: var(--gradient);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: var(--light);
+        color: var(--gray);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-icon {
+        background: rgba(124, 58, 237, 0.1);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        cursor: pointer;
+        color: var(--primary);
+        font-size: 1.1rem;
+        transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+        background: rgba(124, 58, 237, 0.2);
+        transform: scale(1.05);
+    }
+
+    .sync-info {
+        font-size: 0.7rem;
+        color: var(--gray);
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    /* Toast */
+    .toast {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        border-radius: 40px;
+        color: white;
+        z-index: 1100;
+        animation: slideUp 0.3s ease;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    .toast-info { background: var(--primary); }
+
+    /* Actions Menu */
+    .actions-menu {
+        position: fixed;
+        bottom: 90px;
+        right: 24px;
+        background: white;
+        border-radius: 16px;
+        padding: 8px;
+        box-shadow: var(--shadow-xl);
+        z-index: 200;
+        display: none;
+    }
+
+    .actions-menu.show {
+        display: block;
+    }
+
+    .actions-menu button {
+        display: block;
+        width: 100%;
+        padding: 12px 20px;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .actions-menu button:hover {
+        background: var(--light);
+    }
+
+    /* Chart Modal */
+    .chart-container {
+        margin-top: 20px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .chart-bar {
+        margin-bottom: 12px;
+    }
+
+    .chart-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        font-size: 0.8rem;
+    }
+
+    .bar {
+        height: 30px;
+        background: var(--gradient);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: width 0.5s ease;
+    }
+
+    /* Animações */
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translate(-50%, 20px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateX(-50%) translateY(0); }
+        to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .app-container { padding: 12px; }
+        .appointment-item { flex-direction: column; gap: 12px; }
+        .appointment-actions { width: 100%; justify-content: flex-end; }
+        .appointment-details { flex-direction: column; gap: 4px; }
+        .card-value { font-size: 1.5rem; }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(124, 58, 237, 0.1);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Header Moderno -->
+    <div class="header-modern">
+        <div class="header-content">
+            <div class="logo-area">
+                <h1><i class="fas fa-calendar-alt"></i> Agenda Rosi</h1>
+                <div class="badge-pro">✨ Profissional | Podologia & Estética</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" id="btnAdmin" title="Admin"><i class="fas fa-crown"></i></button>
+                <button class="btn-icon" id="btnSync" title="Sincronizar"><i class="fas fa-sync-alt"></i></button>
+                <button class="btn-icon" id="btnActions" title="Mais opções"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
+        </div>
+        <div class="sync-info" id="syncStatus"><i class="fas fa-circle-notch fa-spin"></i> Sincronizando...</div>
+    </div>
+
+    <!-- Dashboard Cards (Apenas 1 card de Receita) -->
+    <div class="dashboard-grid" id="dashboardGrid"></div>
+
+    <!-- Filtros Rápidos (Hoje, Essa Semana, Todos) -->
+    <div class="filters-section">
+        <div class="filter-buttons" id="filterButtons">
+            <button class="filter-chip active" data-filter="today">
+                <i class="fas fa-sun"></i> Hoje
+                <span class="filter-badge" id="todayCount">0</span>
+            </button>
+            <button class="filter-chip" data-filter="week">
+                <i class="fas fa-calendar-week"></i> Essa Semana
+            </button>
+            <button class="filter-chip" data-filter="all">
+                <i class="fas fa-list"></i> Todos
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Agendamentos -->
+    <div class="appointments-list">
+        <div class="list-header">
+            <h3><i class="fas fa-calendar-check"></i> Agendamentos <span class="count-badge" id="appointmentsCount">0</span></h3>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar cliente ou procedimento...">
+            </div>
+        </div>
+        <div id="appointmentsList"></div>
+    </div>
+</div>
+
+<!-- FAB Button -->
+<button class="fab-button" id="fabButton"><i class="fas fa-plus"></i></button>
+
+<!-- Modal de Formulário -->
+<div class="modal" id="modalForm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle"><i class="fas fa-calendar-plus"></i> Novo Agendamento</h3>
+            <button class="btn-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="appointmentForm">
+            <input type="hidden" id="editId">
+            <input type="hidden" id="originalDateTime" value="">
+            
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Nome do Cliente *</label>
+                <input type="text" id="nome" required placeholder="Digite o nome completo">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefone</label>
+                <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-calendar-clock"></i> Data e Horário *</label>
+                <input type="datetime-local" id="datahora" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-spa"></i> Procedimento *</label>
+                <select id="procedimento" required onchange="toggleOutroProcedimento()">
+                    <option value="">Selecione...</option>
+                    <option value="Manicure e Pedicure">💅 Manicure e Pedicure</option>
+                    <option value="Manicure">💅 Manicure</option>
+                    <option value="Pedicure">🦶 Pedicure</option>
+                    <option value="Unha de gel">✨ Unha de gel</option>
+                    <option value="Sobrancelha">👁️ Sobrancelha</option>
+                    <option value="Buço">💋 Buço</option>
+                    <option value="Depilação">✨ Depilação</option>
+                    <option value="SPA dos pés">🌸 SPA dos pés</option>
+                    <option value="Outro">📝 Outro</option>
+                </select>
+            </div>
+
+            <div class="form-group hidden" id="outroGroup">
+                <label><i class="fas fa-pen"></i> Especifique o procedimento</label>
+                <input type="text" id="procedimentoOutro" placeholder="Digite o procedimento">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-dollar-sign"></i> Valor (R$)</label>
+                <input type="text" id="valor" placeholder="0,00">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-sticky-note"></i> Observações</label>
+                <textarea id="observacao" rows="3" placeholder="Informações importantes..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de Gráfico -->
+<div class="modal" id="chartModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-chart-line"></i> Histórico de Faturamento</h3>
+            <button class="btn-close" onclick="closeChartModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chart-container" id="chartContainer"></div>
+    </div>
+</div>
+
+<!-- Menu de Ações Flutuante -->
+<div class="actions-menu" id="actionsMenu">
+    <button onclick="exportToWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+    <button onclick="exportBackup()"><i class="fas fa-download"></i> Backup</button>
+    <button onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Importar</button>
+    <button onclick="generateReport()"><i class="fas fa-chart-bar"></i> Relatório</button>
+</div>
+
+<input type="file" id="importFile" accept=".json" style="display: none;">
+
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCj-lKzxakhUpT8Z4pNIHCi1EjbH4ICQ_Y",
+        authDomain: "agenda-rosi.firebaseapp.com",
+        databaseURL: "https://agenda-rosi-default-rtdb.firebaseio.com",
+        projectId: "agenda-rosi",
+        storageBucket: "agenda-rosi.firebasestorage.app",
+        messagingSenderId: "66511138621",
+        appId: "1:66511138621:web:7d96b3532c3a9b7a30df54"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const appointmentsRef = database.ref('agendamentos');
+
+    // Global Variables
+    let appointments = [];
+    let currentFilter = 'today';
+    let searchTerm = '';
+    let isAdmin = false;
+    let editingId = null;
+    let reactivatingId = null;
+    const ADMIN_PASSWORD = "rosi2025";
+
+    // Initialize App
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAdminStatus();
+        setupEventListeners();
+        loadAppointments();
+        requestNotificationPermission();
+        setMinDateTime();
+        setInterval(setMinDateTime, 60000);
+        setInterval(checkUpcomingAppointments, 60000);
+    });
+
+    function setupEventListeners() {
+        document.getElementById('fabButton').addEventListener('click', () => openModal());
+        document.getElementById('btnAdmin').addEventListener('click', adminLogin);
+        document.getElementById('btnSync').addEventListener('click', () => forceSync());
+        document.getElementById('btnActions').addEventListener('click', toggleActionsMenu);
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase();
+            renderAppointments();
+        });
+        
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderAppointments();
+            });
+        });
+
+        document.getElementById('appointmentForm').addEventListener('submit', saveAppointment);
+        document.getElementById('telefone').addEventListener('input', formatPhone);
+        document.getElementById('valor').addEventListener('input', formatCurrency);
+        document.getElementById('modalForm').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalForm')) closeModal();
+        });
+        document.getElementById('importFile').addEventListener('change', importBackup);
+    }
+
+    function checkAdminStatus() {
+        isAdmin = sessionStorage.getItem('agenda_rosi_admin') === 'true';
+    }
+
+    function adminLogin() {
+        const password = prompt("Digite a senha administrativa:");
+        if (password === ADMIN_PASSWORD) {
+            isAdmin = true;
+            sessionStorage.setItem('agenda_rosi_admin', 'true');
+            showToast('Modo administrador ativado!', 'success');
+            renderDashboard();
+            renderAppointments();
+        } else if (password) showToast('Senha incorreta!', 'error');
+    }
+
+    function loadAppointments() {
+        appointmentsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                appointments = Object.entries(data).map(([id, value]) => ({ id, ...value }));
+            } else {
+                appointments = [];
+            }
+            updateSyncStatus(true);
+            updateTodayCount();
+            renderDashboard();
+            renderAppointments();
+        }, (error) => {
+            updateSyncStatus(false);
+            showToast('Erro ao carregar dados!', 'error');
+        });
+    }
+
+    function updateTodayCount() {
+        const now = new Date();
+        const todayCount = appointments.filter(a => {
+            const date = new Date(a.datahora);
+            return date.toDateString() === now.toDateString() && !a.cancelado && !a.completed;
+        }).length;
+        document.getElementById('todayCount').textContent = todayCount;
+    }
+
+    async function saveAppointment(e) {
+        e.preventDefault();
+        
+        const nome = document.getElementById('nome').value.trim();
+        if (!nome) { showToast('Nome do cliente é obrigatório!', 'error'); return; }
+
+        let datahora = document.getElementById('datahora').value;
+        if (!datahora) { showToast('Data e horário são obrigatórios!', 'error'); return; }
+
+        let procedimento = document.getElementById('procedimento').value;
+        if (procedimento === 'Outro') {
+            procedimento = document.getElementById('procedimentoOutro').value.trim();
+            if (!procedimento) { showToast('Descreva o procedimento!', 'error'); return; }
+        }
+
+        const originalDateTime = document.getElementById('originalDateTime').value;
+        
+        // Para reativação, verificar se o horário é diferente do original
+        if (reactivatingId && datahora === originalDateTime) {
+            showToast('Por favor, selecione um novo horário para reativar este agendamento!', 'error');
+            return;
+        }
+
+        // Verificar conflito de horário
+        const conflict = appointments.some(a => 
+            a.datahora === datahora && 
+            !a.cancelado && 
+            a.id !== editingId &&
+            a.id !== reactivatingId
+        );
+
+        if (conflict) { showToast('Este horário já está ocupado!', 'error'); return; }
+
+        const appointmentData = {
+            nome: nome,
+            telefone: document.getElementById('telefone').value,
+            datahora: datahora,
+            procedimento: procedimento,
+            valor: document.getElementById('valor').value,
+            observacao: document.getElementById('observacao').value,
+            cancelado: false,
+            completed: false,
+            updatedAt: new Date().toISOString()
+        };
+
+        try {
+            showLoading(true);
+            if (editingId || reactivatingId) {
+                const id = editingId || reactivatingId;
+                await appointmentsRef.child(id).update(appointmentData);
+                showToast(reactivatingId ? 'Agendamento reativado com novo horário!' : 'Agendamento atualizado!', 'success');
+            } else {
+                appointmentData.createdAt = new Date().toISOString();
+                await appointmentsRef.push(appointmentData);
+                showToast('Agendamento salvo!', 'success');
+            }
+            closeModal();
+            resetForm();
+        } catch (error) {
+            showToast('Erro ao salvar!', 'error');
+        } finally {
+            showLoading(false);
+            reactivatingId = null;
+        }
+    }
+
+    async function completeAppointment(id) {
+        if (!confirm('Marcar este procedimento como concluído? O valor será adicionado à receita.')) return;
+        
+        try {
+            await appointmentsRef.child(id).update({ 
+                completed: true,
+                completedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+            showToast('Procedimento concluído! Valor adicionado à receita.', 'success');
+            renderDashboard();
+        } catch (error) {
+            showToast('Erro ao concluir!', 'error');
+        }
+    }
+
+    async function cancelAppointment(id) {
+        if (!confirm('Cancelar este agendamento?')) return;
+        
+        try {
+            await appointmentsRef.child(id).update({ 
+                cancelado: true,
+                updatedAt: new Date().toISOString()
+            });
+            showToast('Agendamento cancelado!', 'success');
+            updateTodayCount();
+        } catch (error) {
+            showToast('Erro ao cancelar!', 'error');
+        }
+    }
+
+    async function reactivateAppointment(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment) return;
+        
+        reactivatingId = id;
+        editingId = null;
+        
+        // Abrir modal para novo horário
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-redo-alt"></i> Reativar com Novo Horário';
+        document.getElementById('nome').value = appointment.nome;
+        document.getElementById('telefone').value = appointment.telefone || '';
+        document.getElementById('datahora').value = '';
+        document.getElementById('valor').value = appointment.valor || '';
+        document.getElementById('observacao').value = appointment.observacao || '';
+        document.getElementById('originalDateTime').value = appointment.datahora;
+        
+        const commonProcedures = ['Manicure e Pedicure', 'Manicure', 'Pedicure', 'Unha de gel', 'Sobrancelha', 'Buço', 'Depilação', 'SPA dos pés'];
+        if (commonProcedures.includes(appointment.procedimento)) {
+            document.getElementById('procedimento').value = appointment.procedimento;
+            document.getElementById('outroGroup').classList.add('hidden');
+        } else {
+            document.getElementById('procedimento').value = 'Outro';
+            document.getElementById('procedimentoOutro').value = appointment.procedimento;
+            document.getElementById('outroGroup').classList.remove('hidden');
+        }
+        
+        openModal();
+    }
+
+    async function deleteAppointment(id) {
+        if (!confirm('Excluir permanentemente? Esta ação não pode ser desfeita.')) return;
+        
+        try {
+            await appointmentsRef.child(id).remove();
+            showToast('Agendamento excluído!', 'success');
+        } catch (error) {
+            showToast('Erro ao excluir!', 'error');
+        }
+    }
+
+    function editAppointment(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment) return;
+        
+        editingId = id;
+        reactivatingId = null;
+        document.getElementById('editId').value = id;
+        document.getElementById('originalDateTime').value = '';
+        document.getElementById('nome').value = appointment.nome;
+        document.getElementById('telefone').value = appointment.telefone || '';
+        document.getElementById('datahora').value = appointment.datahora;
+        document.getElementById('valor').value = appointment.valor || '';
+        document.getElementById('observacao').value = appointment.observacao || '';
+        
+        const commonProcedures = ['Manicure e Pedicure', 'Manicure', 'Pedicure', 'Unha de gel', 'Sobrancelha', 'Buço', 'Depilação', 'SPA dos pés'];
+        if (commonProcedures.includes(appointment.procedimento)) {
+            document.getElementById('procedimento').value = appointment.procedimento;
+            document.getElementById('outroGroup').classList.add('hidden');
+        } else {
+            document.getElementById('procedimento').value = 'Outro';
+            document.getElementById('procedimentoOutro').value = appointment.procedimento;
+            document.getElementById('outroGroup').classList.remove('hidden');
+        }
+        
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Editar Agendamento';
+        openModal();
+    }
+
+    function renderDashboard() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        // Receita do mês atual (apenas concluídos)
+        const monthlyRevenue = appointments.filter(a => {
+            const date = new Date(a.datahora);
+            return date.getMonth() === currentMonth && 
+                   date.getFullYear() === currentYear && 
+                   a.completed === true;
+        }).reduce((sum, a) => sum + (parseFloat(a.valor?.replace(',', '.')) || 0), 0);
+        
+        const dashboardHTML = `
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <i class="fas fa-chart-simple" style="color: var(--gray);"></i>
+                </div>
+                <div class="card-value">${isAdmin ? formatCurrencyValue(monthlyRevenue) : '•••••'}</div>
+                <div class="card-label">Receita do Mês</div>
+                ${isAdmin ? `
+                    <div class="revenue-buttons">
+                        <button class="btn-revenue" onclick="showTotalRevenue()">
+                            <i class="fas fa-chart-line"></i> Total
+                        </button>
+                        <button class="btn-revenue" onclick="showRevenueChart()">
+                            <i class="fas fa-chart-bar"></i> Histórico
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        document.getElementById('dashboardGrid').innerHTML = dashboardHTML;
+    }
+
+    function showTotalRevenue() {
+        const totalRevenue = appointments.filter(a => a.completed === true)
+            .reduce((sum, a) => sum + (parseFloat(a.valor?.replace(',', '.')) || 0), 0);
+        
+        alert(`📊 RECEITA TOTAL\n\n💰 ${formatCurrencyValue(totalRevenue)}\n\n✅ Total de procedimentos concluídos: ${appointments.filter(a => a.completed === true).length}`);
+    }
+
+    function showRevenueChart() {
+        const months = {};
+        const now = new Date();
+        
+        appointments.filter(a => a.completed === true).forEach(a => {
+            const date = new Date(a.datahora);
+            const key = `${date.getMonth() + 1}/${date.getFullYear()}`;
+            const value = parseFloat(a.valor?.replace(',', '.')) || 0;
+            months[key] = (months[key] || 0) + value;
+        });
+        
+        const sortedMonths = Object.keys(months).sort((a, b) => {
+            const [monthA, yearA] = a.split('/');
+            const [monthB, yearB] = b.split('/');
+            return new Date(yearA, monthA - 1) - new Date(yearB, monthB - 1);
+        });
+        
+        const maxValue = Math.max(...Object.values(months), 1);
+        
+        const chartHTML = sortedMonths.map(month => {
+            const value = months[month];
+            const percentage = (value / maxValue) * 100;
+            return `
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>📅 ${month}</span>
+                        <span>💰 ${formatCurrencyValue(value)}</span>
+                    </div>
+                    <div class="bar" style="width: ${percentage}%;">
+                        ${percentage > 15 ? formatCurrencyValue(value) : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        document.getElementById('chartContainer').innerHTML = chartHTML || '<p style="text-align:center;">Nenhum dado de faturamento ainda.</p>';
+        document.getElementById('chartModal').classList.add('active');
+    }
+
+    function closeChartModal() {
+        document.getElementById('chartModal').classList.remove('active');
+    }
+
+    function renderAppointments() {
+        let filtered = [...appointments];
+        const now = new Date();
+        
+        switch(currentFilter) {
+            case 'today':
+                filtered = filtered.filter(a => new Date(a.datahora).toDateString() === now.toDateString());
+                break;
+            case 'week':
+                const weekStart = new Date(now);
+                weekStart.setDate(now.getDate() - now.getDay());
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                filtered = filtered.filter(a => {
+                    const date = new Date(a.datahora);
+                    return date >= weekStart && date <= weekEnd;
+                });
+                break;
+        }
+        
+        if (searchTerm) {
+            filtered = filtered.filter(a => 
+                a.nome.toLowerCase().includes(searchTerm) ||
+                a.procedimento.toLowerCase().includes(searchTerm) ||
+                (a.telefone && a.telefone.includes(searchTerm))
+            );
+        }
+        
+        filtered.sort((a, b) => new Date(a.datahora) - new Date(b.datahora));
+        document.getElementById('appointmentsCount').textContent = filtered.length;
+        
+        if (filtered.length === 0) {
+            document.getElementById('appointmentsList').innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>Nenhum agendamento encontrado</p>
+                    <button class="btn-primary" style="margin-top: 16px;" onclick="openModal()">
+                        <i class="fas fa-plus"></i> Novo Agendamento
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        const appointmentsHTML = filtered.map(appointment => {
+            const date = new Date(appointment.datahora);
+            const formattedDate = date.toLocaleDateString('pt-BR');
+            const formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const value = parseFloat(appointment.valor?.replace(',', '.') || 0);
+            
+            let statusClass = '';
+            let statusText = '';
+            if (appointment.cancelado) {
+                statusClass = 'status-cancelled';
+                statusText = 'Cancelado';
+            } else if (appointment.completed) {
+                statusClass = 'status-completed';
+                statusText = 'Concluído';
+            } else {
+                statusClass = 'status-confirmed';
+                statusText = 'Confirmado';
+            }
+            
+            return `
+                <div class="appointment-item ${appointment.cancelado ? 'cancelled' : appointment.completed ? 'completed' : ''}">
+                    <div class="appointment-info">
+                        <div class="client-name">
+                            ${appointment.nome}
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="appointment-details">
+                            <span class="detail-item"><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                            <span class="detail-item"><i class="fas fa-clock"></i> ${formattedTime}</span>
+                            <span class="detail-item"><i class="fas fa-spa"></i> ${appointment.procedimento}</span>
+                            ${value > 0 && !appointment.completed ? `<span class="detail-item"><i class="fas fa-dollar-sign"></i> ${formatCurrencyValue(value)}</span>` : ''}
+                            ${appointment.completed && value > 0 ? `<span class="detail-item"><i class="fas fa-check-circle"></i> Pago: ${formatCurrencyValue(value)}</span>` : ''}
+                            ${appointment.telefone ? `<span class="detail-item"><i class="fas fa-phone"></i> ${appointment.telefone}</span>` : ''}
+                        </div>
+                        ${appointment.observacao ? `<div class="appointment-notes"><i class="fas fa-sticky-note"></i> ${appointment.observacao}</div>` : ''}
+                    </div>
+                    <div class="appointment-actions">
+                        ${!appointment.cancelado && !appointment.completed && appointment.telefone ? 
+                            `<button class="action-btn whatsapp" onclick="sendWhatsApp('${appointment.id}')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>` : ''}
+                        ${!appointment.cancelado && !appointment.completed ? 
+                            `<button class="action-btn complete" onclick="completeAppointment('${appointment.id}')" title="Concluir"><i class="fas fa-check"></i></button>` : ''}
+                        ${!appointment.cancelado && !appointment.completed ? 
+                            `<button class="action-btn edit" onclick="editAppointment('${appointment.id}')" title="Editar"><i class="fas fa-edit"></i></button>` : ''}
+                        ${!appointment.completed ?
+                            (appointment.cancelado ? 
+                                `<button class="action-btn reactivate" onclick="reactivateAppointment('${appointment.id}')" title="Reativar"><i class="fas fa-redo-alt"></i></button>` : 
+                                `<button class="action-btn cancel" onclick="cancelAppointment('${appointment.id}')" title="Cancelar"><i class="fas fa-times"></i></button>`)
+                            : ''}
+                        <button class="action-btn delete" onclick="deleteAppointment('${appointment.id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        document.getElementById('appointmentsList').innerHTML = appointmentsHTML;
+    }
+
+    function sendWhatsApp(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment || !appointment.telefone) return;
+        
+        const date = new Date(appointment.datahora);
+        const formattedDate = date.toLocaleDateString('pt-BR', { 
+            weekday: 'long', 
+            day: '2-digit', 
+            month: 'long',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const value = parseFloat(appointment.valor?.replace(',', '.') || 0);
+        
+        let message = `Olá ${appointment.nome}! ✨\n\n`;
+        message += `Sua agenda na Rosi Gomes está confirmada:\n\n`;
+        message += `📅 ${formattedDate}\n`;
+        message += `💅 ${appointment.procedimento}\n`;
+        if (value > 0) message += `💰 ${formatCurrencyValue(value)}\n`;
+        message += `\n📍 Praça Josino Ferreira, 268, 1° andar, centro Picos-PI\n`;
+        message += `\nConfirme sua presença? 💜\n`;
+        message += `Qualquer dúvida, estou à disposição!`;
+        
+        const phone = appointment.telefone.replace(/\D/g, '');
+        window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    function exportToWhatsApp() {
+        let filtered = [...appointments];
+        const now = new Date();
+        
+        switch(currentFilter) {
+            case 'today':
+                filtered = filtered.filter(a => new Date(a.datahora).toDateString() === now.toDateString());
+                break;
+            case 'week':
+                const weekStart = new Date(now);
+                weekStart.setDate(now.getDate() - now.getDay());
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                filtered = filtered.filter(a => {
+                    const date = new Date(a.datahora);
+                    return date >= weekStart && date <= weekEnd;
+                });
+                break;
+        }
+        
+        if (filtered.length === 0) {
+            showToast('Nenhum agendamento para exportar', 'error');
+            return;
+        }
+        
+        let message = `📋 *AGENDA ROSI GOMES*\n`;
+        message += `📅 *${currentFilter === 'today' ? 'Hoje' : currentFilter === 'week' ? 'Esta Semana' : 'Todos'}*\n`;
+        message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+        
+        filtered.forEach((app, index) => {
+            const date = new Date(app.datahora);
+            message += `${index + 1}. *${app.nome}*\n`;
+            message += `   📅 ${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}\n`;
+            message += `   💅 ${app.procedimento}\n`;
+            message += `   📍 Praça Josino Ferreira, 268, 1° andar, centro Picos-PI\n`;
+            if (app.valor && !app.completed) message += `   💰 R$ ${app.valor}\n`;
+            message += `\n`;
+        });
+        
+        message += `━━━━━━━━━━━━━━━━━━━━\n`;
+        message += `Total: ${filtered.length} agendamento(s)`;
+        
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    function exportBackup() {
+        const data = JSON.stringify(appointments, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `agenda-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Backup exportado!', 'success');
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (!Array.isArray(data)) throw new Error('Formato inválido');
+                
+                if (confirm(`Importar ${data.length} agendamentos? Isso substituirá todos os dados atuais.`)) {
+                    await appointmentsRef.remove();
+                    const promises = data.map(item => {
+                        const { id, ...rest } = item;
+                        return appointmentsRef.push(rest);
+                    });
+                    await Promise.all(promises);
+                    showToast('Backup importado com sucesso!', 'success');
+                }
+            } catch (error) {
+                showToast('Erro ao importar backup!', 'error');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    // RELATÓRIO COM TOP 3 CLIENTES
+    function generateReport() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        const monthAppointments = appointments.filter(a => {
+            const date = new Date(a.datahora);
+            return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        });
+        
+        const completed = monthAppointments.filter(a => a.completed === true);
+        const cancelled = monthAppointments.filter(a => a.cancelado === true);
+        const pending = monthAppointments.filter(a => !a.cancelado && !a.completed);
+        const revenue = completed.reduce((sum, a) => sum + (parseFloat(a.valor?.replace(',', '.')) || 0), 0);
+        
+        // Calcular os 3 melhores clientes do mês (baseado no valor total gasto em procedimentos concluídos)
+        const clientSpending = {};
+        completed.forEach(a => {
+            const nome = a.nome;
+            const valor = parseFloat(a.valor?.replace(',', '.')) || 0;
+            if (!clientSpending[nome]) {
+                clientSpending[nome] = { total: 0, count: 0 };
+            }
+            clientSpending[nome].total += valor;
+            clientSpending[nome].count += 1;
+        });
+        
+        const topClients = Object.entries(clientSpending)
+            .map(([nome, data]) => ({ nome, ...data }))
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 3);
+        
+        let topClientsText = '';
+        if (topClients.length > 0) {
+            topClientsText = '\n🏆 *TOP 3 CLIENTES DO MÊS*\n';
+            topClients.forEach((client, idx) => {
+                topClientsText += `${idx+1}. ${client.nome} - ${formatCurrencyValue(client.total)} (${client.count} procedimento${client.count > 1 ? 's' : ''})\n`;
+            });
+        } else {
+            topClientsText = '\n🏆 *Nenhum cliente no ranking este mês*';
+        }
+        
+        const report = `
+📊 *RELATÓRIO MENSAL* 📊
+━━━━━━━━━━━━━━━━━━━━
+
+📅 Mês: ${now.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
+
+✅ Procedimentos Concluídos: ${completed.length}
+⏳ Pendentes: ${pending.length}
+❌ Cancelamentos: ${cancelled.length}
+📈 Taxa de Conclusão: ${Math.round((completed.length / (monthAppointments.length || 1)) * 100)}%
+
+💰 Faturamento Total: ${formatCurrencyValue(revenue)}
+💳 Ticket Médio: ${formatCurrencyValue(revenue / (completed.length || 1))}
+${topClientsText}
+━━━━━━━━━━━━━━━━━━━━
+📍 Praça Josino Ferreira, 268
+1° andar, centro Picos-PI
+        `;
+        
+        window.open(`https://wa.me/?text=${encodeURIComponent(report)}`, '_blank');
+    }
+
+    function formatPhone(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        if (value.length > 2) value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        if (value.length > 10) value = `${value.slice(0, 10)}-${value.slice(10)}`;
+        e.target.value = value;
+    }
+
+    function formatCurrency(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (!value) return;
+        value = (parseInt(value) / 100).toFixed(2);
+        e.target.value = value.replace('.', ',');
+    }
+
+    function formatCurrencyValue(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    }
+
+    function toggleOutroProcedimento() {
+        const select = document.getElementById('procedimento');
+        const outroGroup = document.getElementById('outroGroup');
+        if (select.value === 'Outro') {
+            outroGroup.classList.remove('hidden');
+        } else {
+            outroGroup.classList.add('hidden');
+        }
+    }
+
+    function toggleActionsMenu() {
+        const menu = document.getElementById('actionsMenu');
+        menu.classList.toggle('show');
+        setTimeout(() => menu.classList.remove('show'), 3000);
+    }
+
+    function openModal() {
+        document.getElementById('modalForm').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('modalForm').classList.remove('active');
+        document.body.style.overflow = '';
+        resetForm();
+    }
+
+    function resetForm() {
+        document.getElementById('appointmentForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('originalDateTime').value = '';
+        editingId = null;
+        reactivatingId = null;
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-calendar-plus"></i> Novo Agendamento';
+        document.getElementById('outroGroup').classList.add('hidden');
+        setMinDateTime();
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function showLoading(show) {
+        const btn = document.querySelector('#appointmentForm button[type="submit"]');
+        if (show) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Salvando...';
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Salvar';
+        }
+    }
+
+    function updateSyncStatus(success) {
+        const statusDiv = document.getElementById('syncStatus');
+        if (success) {
+            statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Sincronizado';
+            setTimeout(() => statusDiv.innerHTML = '<i class="fas fa-cloud"></i> Online', 2000);
+        } else {
+            statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro de sincronização';
+        }
+    }
+
+    function forceSync() {
+        showToast('Sincronizando...', 'info');
+        loadAppointments();
+    }
+
+    function requestNotificationPermission() {
+        if ('Notification' in window) Notification.requestPermission();
+    }
+
+    function checkUpcomingAppointments() {
+        const now = new Date();
+        const upcoming = appointments.filter(a => {
+            const date = new Date(a.datahora);
+            const diff = (date - now) / (1000 * 60);
+            return diff > 0 && diff <= 60 && !a.cancelado && !a.completed;
+        });
+        
+        upcoming.forEach(app => {
+            if (Notification.permission === 'granted') {
+                new Notification('🔔 Lembrete de Agendamento', {
+                    body: `${app.nome} em ${Math.round((new Date(app.datahora) - now) / 60000)} minutos`,
+                    icon: '/icon-192.png'
+                });
+            }
+        });
+    }
+
+    function setMinDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        const minDateTime = `${year}-${month}-${day}T${hour}:${minute}`;
+        const input = document.getElementById('datahora');
+        if (input) input.min = minDateTime;
+    }
+</script>
+</body>
+</html>
